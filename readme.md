@@ -168,6 +168,7 @@ Below are a list of websites that can give you support for different features of
 
 * [Sass Documentation](https://sass-lang.com/documentation/file.SASS_REFERENCE.html)
 * [Pug Documentation](https://pugjs.org/api/getting-started.html)
+  * Struggling with Pug?  [This site will convert html to pug for you!](http://html2jade.org/)
 * [Bootstrap Documentation](https://getbootstrap.com/docs/4.0/getting-started/introduction/)
 
 Still need help?  Either [email](mailto:markr@scotsmanguide.com) or come ask `Mark`.
