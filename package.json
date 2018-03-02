@@ -2,7 +2,7 @@
   "name": "ux_framework",
   "version": "1.0.0",
   "description": "A boilerplate for UI design using pug and sass.",
-  "license": "LicenseRef-LICENSE",
+  "private": true,
   "scripts": {
     "build": "webpack --env production",
     "start": "nodemon --watch webpack.config.js --exec \"webpack-dev-server --open --hot --env development\"",
