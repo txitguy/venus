@@ -1,3 +1,4 @@
 build/**/*.js
 dist/**/*.js
 static/**/*.js
+etc/**/*.js

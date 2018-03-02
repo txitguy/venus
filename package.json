@@ -2,9 +2,11 @@
   "name": "ux_framework",
   "version": "1.0.0",
   "description": "A boilerplate for UI design using pug and sass.",
+  "license": "LicenseRef-LICENSE",
   "scripts": {
     "build": "webpack --env production",
-    "start": "nodemon --watch webpack.config.js --exec \"webpack-dev-server --open --hot --env development\""
+    "start": "nodemon --watch webpack.config.js --exec \"webpack-dev-server --open --hot --env development\"",
+    "create-page": "node etc/create-page/create-page.js"
   },
   "devDependencies": {
     "autoprefixer": "^7.2.2",
@@ -62,6 +64,7 @@
     "node": ">=6.0.0"
   },
   "dependencies": {
-    "bootstrap": "^4.0.0"
+    "bootstrap": "^4.0.0",
+    "node-fs-extra": "^0.8.2"
   }
 }
