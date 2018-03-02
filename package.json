@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --env production",
     "start": "nodemon --watch webpack.config.js --exec \"webpack-dev-server --open --hot --env development\"",
-    "create-page": "node etc/create-page/create-page.js"
+    "create-page": "node etc/bin/create-page.js"
   },
   "devDependencies": {
     "autoprefixer": "^7.2.2",
