@@ -25,14 +25,14 @@ module.exports = {
     'promise/avoid-new': 0,
     'compat/compat': 1,
     'node/no-deprecated-api': 2,
-    'node/no-extraneous-require': 2,
+    'node/no-extraneous-require': 0, // Disabling due to node-fs-extra being included as fs-extra
     'node/no-missing-require': 2,
     'import/no-unresolved': [2, { commonjs: true, amd: true }],
     'import/named': 2,
     'import/namespace': 2,
     'import/default': 2,
     'import/export': 2,
-    'no-console': 1,
-    'curly': 0
+    'curly': 0,
+    'space-before-function-paren': 0
   }
 }

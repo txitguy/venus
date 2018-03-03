@@ -1,0 +1,11 @@
+/**
+ * This is the main sass file which includes other global sass.
+ * Pages should include this file at the top.
+ */
+
+@import "./_variables";
+@import "./_layout";
+@import "./_typography";
+
+// Bootstrap should be last
+@import "../../../node_modules/bootstrap/scss/bootstrap";

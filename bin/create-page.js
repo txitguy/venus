@@ -7,8 +7,8 @@ const readline = require('readline')
 const path = require('path')
 
 const PATHS = {
-    pages: './app/pages/',
-    templates: path.join(__dirname, '../etc/create-page/templates/')
+  pages: './app/pages/',
+  templates: path.join(__dirname, '../etc/create-page/templates/')
 }
 
 const colors = {
@@ -39,139 +39,140 @@ const colors = {
   BgWhite: '\x1b[47m'
 }
 
-console.log(colors.FgGreen, "\r\n")
-console.log('Welcome to the interactive page creation tool.')
-console.log('This will guide you through the setup and creation of new pages for the application.')
-console.log('Let\'s begin!', colors.Reset, "\r\n")
-
 var Page = {
-    name: '',
-    title: '',
-    layout: 'base' // default
+  name: '',
+  title: '',
+  layout: 'base' // default
 }
 
 function getPageName(rl) {
-    rl.question('What is the name of the page you want to create?  ', (pageName) => {
+  rl.question('What is the name of the page you want to create?  ', (pageName) => {
+    if (!pageName) {
+      console.log(colors.FgRed, '\r\n')
+      console.log('The page name is a required field.')
+      console.log(colors.Reset)
+      getPageName(rl)
+      return
+    }
 
-        if (!pageName) {
-            console.log(colors.FgRed, "\r\n")
-            console.log('The page name is a required field.')
-            console.log(colors.Reset)
-            getPageName(rl)
-            return
-        }
+    // make the page lower case
+    pageName = pageName.toLowerCase()
 
-        // make the page lower case
-        pageName = pageName.toLowerCase()
-
-        // check if page already exists
-        if (fs.pathExistsSync(`${PATHS.pages}${pageName}`)) {
-            console.log(colors.FgRed, "\r\n")
-            console.log('That page already exists. Try again.')
-            console.log(colors.Reset)
-            getPageName(rl)
-        } else {
-
-            // Set the value and move to the next step
-            Page.name = pageName;
-            getPageLayout(rl)
-        }
-    })
+    // check if page already exists
+    if (fs.pathExistsSync(`${PATHS.pages}${pageName}`)) {
+      console.log(colors.FgRed, '\r\n')
+      console.log('That page already exists. Try again.')
+      console.log(colors.Reset)
+      getPageName(rl)
+    } else {
+      // Set the value and move to the next step
+      Page.name = pageName
+      getPageLayout(rl)
+    }
+  })
 }
 
 function getPageLayout(rl) {
-    rl.question('Which layout would you like to extend? [base]  ', (layout) => {
+  rl.question('Which layout would you like to extend? [base]  ', (layout) => {
+    // set default
+    if (!layout) {
+      layout = Page.layout
+    }
 
-        // set default
-        if (!layout) {
-            layout = Page.layout
-        }
-
-        // validate the layout
-        if (!fs.pathExistsSync(`${PATHS.templates}${layout}`)) {
-            console.log(colors.FgRed, "\r\n")
-            console.log('That layout does not exist.  Try again.')
-            console.log(colors.Reset)
-            getPageLayout(rl)
-        } else {
-
-            // Set the value and move to the next step
-            Page.layout = layout
-            getPageTitle(rl)
-        }
-    })
+    // validate the layout
+    if (!fs.pathExistsSync(`${PATHS.templates}${layout}`)) {
+      console.log(colors.FgRed, '\r\n')
+      console.log('That layout does not exist.  Try again.')
+      console.log(colors.Reset)
+      getPageLayout(rl)
+    } else {
+      // Set the value and move to the next step
+      Page.layout = layout
+      getPageTitle(rl)
+    }
+  })
 }
 
 function getPageTitle(rl) {
-    rl.question('What is the title of the page? (empty)  ', (pageTitle) => {
-
-        // set the value and move to the next step
-        Page.title = pageTitle
-        confirmCreatePage(rl)
-    })
+  rl.question('What is the title of the page? (empty)  ', (pageTitle) => {
+    // set the value and move to the next step
+    Page.title = pageTitle
+    confirmCreatePage(rl)
+  })
 }
 
 function confirmCreatePage(rl) {
+  // show page details
+  console.log('\r\n')
+  console.log('Here is your page summary:')
+  console.log('Page Name: ' + colors.FgBlue + Page.name + colors.Reset)
+  console.log('Layout: ' + colors.FgBlue + Page.layout + colors.Reset)
+  console.log('Page Title: ' + colors.FgBlue + Page.title + colors.Reset)
+  console.log('\r\n')
 
-    // show page details
-    console.log("\r\n")
-    console.log('Here is your page summary:')
-    console.log('Page Name: ' + colors.FgBlue + Page.name + colors.Reset)
-    console.log('Layout: ' + colors.FgBlue + Page.layout + colors.Reset)
-    console.log('Page Title: ' + colors.FgBlue + Page.title + colors.Reset)
-    console.log("\r\n")
-
-    rl.question('Would you like to create this page now? [Y,n]  ', (verify) => {
-
-        verify = verify.toLowerCase() || 'y'
-        if (verify === 'y') {
-            createPage()
-        } else {
-            console.log(colors.FgRed, "\r\n")
-            console.log("Canceling page creating.")
-            console.log(colors.Reset)
-            process.exit()
-        }
-    }) 
+  rl.question('Would you like to create this page now? [Y,n]  ', (verify) => {
+    verify = verify.toLowerCase() || 'y'
+    if (verify === 'y') {
+      createPage()
+    } else {
+      console.log(colors.FgRed, '\r\n')
+      console.log('Canceling page creating.')
+      console.log(colors.Reset)
+      process.exit()
+    }
+  })
 }
 
 function createPage() {
+  // Copy the layout to the pages folder
+  fs.copySync(`${PATHS.templates}${Page.layout}`, `${PATHS.pages}${Page.name}`)
 
-    // Copy the layout to the pages folder
-    fs.copySync(`${PATHS.templates}${Page.layout}`, `${PATHS.pages}${Page.name}`)
+  // Rename the files and overwrite template variables
+  fs.readdir(`${PATHS.pages}${Page.name}`, (err, items) => {
+    if (err) {
+      console.log('something went terribly wrong')
+      process.exit()
+    }
+    items.forEach((item) => {
+      // Move the file
+      let newFile = Page.name + '.' + item.split('.').slice(1).join('.')
+      fs.moveSync(`${PATHS.pages}${Page.name}/${item}`, `${PATHS.pages}${Page.name}/${newFile}`)
 
-    // Rename the files and overwrite template variables
-    fs.readdir(`${PATHS.pages}${Page.name}`, (err, items) => {
-        
-        items.forEach((item) => {
+      // Load the contents
+      let fileContents = fs.readFileSync(`${PATHS.pages}${Page.name}/${newFile}`, 'utf8')
 
-            // Move the file
-            let newFile = Page.name + '.' + item.split('.').slice(1).join('.');
-            fs.moveSync(`${PATHS.pages}${Page.name}/${item}`, `${PATHS.pages}${Page.name}/${newFile}`)
+      // Overwrite any template vars
+      fileContents = fileContents.replace(/{{page.name}}/, Page.name)
+      fileContents = fileContents.replace(/{{page.title}}/, Page.title)
+      fileContents = fileContents.replace(/{{page.layout}}/, Page.layout)
 
-            // Load the contents
-            let fileContents = fs.readFileSync(`${PATHS.pages}${Page.name}/${newFile}`, 'utf8')
-
-            // Overwrite any template vars
-            fileContents = fileContents.replace(/{{page.name}}/, Page.name)
-            fileContents = fileContents.replace(/{{page.title}}/, Page.title)
-            fileContents = fileContents.replace(/{{page.layout}}/, Page.layout)
-
-            // Save the file
-            fs.writeFileSync(`${PATHS.pages}${Page.name}/${newFile}`, fileContents)
-        })
-
-        console.log(colors.FgGreen, "\r\n")
-        console.log("Page successfully created!")
-        console.log(colors.Reset)
-    
-        process.exit()
+      // Save the file
+      fs.writeFileSync(`${PATHS.pages}${Page.name}/${newFile}`, fileContents)
     })
+
+    console.log(colors.FgGreen, '\r\n')
+    console.log('Page successfully created!')
+    console.log(colors.Reset)
+
+    process.exit()
+  })
 }
 
 const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
+  input: process.stdin,
+  output: process.stdout
 })
 
-getPageName(rl)
+exports.exec = function(args) {
+  console.log(colors.FgGreen, '\r\n')
+  console.log('Welcome to the interactive page creation tool.')
+  console.log('This will guide you through the setup and creation of new pages for the application.')
+  console.log('Let\'s begin!', colors.Reset, '\r\n')
+
+  if (args.length) {
+    Page.name = args[0]
+    getPageLayout(rl)
+  } else {
+    getPageName(rl)
+  }
+}
