@@ -69,6 +69,7 @@ let args = process.argv.splice(2)
 
 if (!args.length) {
   showHelp()
+  process.exit()
 } else {
   let cmd = args[0]
   args = args.splice(1)

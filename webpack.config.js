@@ -1,6 +1,6 @@
 const path = require('path')
 const glob = require('glob')
-
+const fs = require('fs-extra')
 const webpack = require('webpack')
 const merge = require('webpack-merge')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
@@ -10,7 +10,7 @@ const ManifestPlugin = require('webpack-manifest-plugin')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const CleanPlugin = require('clean-webpack-plugin')
 
-const parts = require('./webpack.parts')
+const parts = require(path.join(__dirname, 'webpack.parts'))
 
 const lintJSOptions = {
   emitWarning: true,
@@ -26,18 +26,31 @@ const lintJSOptions = {
 }
 
 const PATHS = {
-  app: path.join(__dirname, 'app'),
-  build: path.join(__dirname, 'build')
+  app: path.join(process.cwd(), 'app'),
+  build: path.join(process.cwd(), 'build')
 }
 
 const lintStylesOptions = {
-  context: path.resolve(__dirname, `${PATHS.app}/styles`),
+  context: path.resolve(process.cwd(), `${PATHS.app}/common/sass`),
   syntax: 'scss',
   emitErrors: false
   // fix: true,
 }
 
 const cssPreprocessorLoader = { loader: 'fast-sass-loader' }
+
+// Create entry points and plugins
+let pages = fs.readdirSync(`${PATHS.app}/pages`)
+let entryPoints = {}
+let plugins = []
+pages.forEach((page) => {
+  entryPoints[page] = (`${PATHS.app}/pages/${page}/${page}.js`)
+  plugins.push(new HtmlWebpackPlugin({
+    filename: `${page}.html`,
+    chunks: [page, 'common'],
+    template: `${PATHS.app}/pages/${page}/${page}.pug`
+  }))
+})
 
 const commonConfig = merge([
   {
@@ -46,32 +59,19 @@ const commonConfig = merge([
       unsafeCache: true,
       symlinks: false
     },
-    entry: {
-      'index': `${PATHS.app}/pages/index/index.js`,
-      'blog': `${PATHS.app}/pages/blog/blog.js`
-    },
+    entry: entryPoints,
     output: {
       path: PATHS.build,
       publicPath: parts.publicPath,
       filename: '[name].[hash:8].js'
     },
-    plugins: [
-      new HtmlWebpackPlugin({
-        filename: 'index.html',
-        chunks: ['index', 'common'],
-        template: `${PATHS.app}/pages/index/index.pug`
-      }),
-      new HtmlWebpackPlugin({
-        filename: 'blog.html',
-        chunks: ['blog', 'common'],
-        template: `${PATHS.app}/pages/blog/blog.pug`
-      }),
+    plugins: plugins.concat([
       new webpack.optimize.CommonsChunkPlugin({
         name: 'common'
       }),
       new FriendlyErrorsPlugin(),
       new StylelintPlugin(lintStylesOptions)
-    ],
+    ]),
     module: {
       noParse: /\.min\.js/
     }
