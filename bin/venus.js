@@ -54,7 +54,7 @@ function showHelp() {
   console.log(term.tab, term.colors.FgCyan, 'widget [name]', term.tab, term.colors.FgWhite, 'Creates a new widget.  optional name parameter', term.newLine)
 
   console.log(term.colors.FgBlue, 'start', term.tab, term.tab, term.tab, term.colors.FgWhite, 'Begins development mode')
-  console.log(term.colors.FgBlue, 'create', term.tab, term.tab, term.colors.FgWhite, 'Creates a venus module')
+  console.log(term.colors.FgBlue, 'build', term.tab, term.tab, term.tab, term.colors.FgWhite, 'Builds the app into the output directory [./build]')
   console.log(term.colors.FgBlue, 'publish', term.tab, term.tab, term.colors.FgWhite, 'Publishes the app to production')
   console.log(term.colors.FgBlue, 'help', term.tab, term.tab, term.tab, term.colors.FgWhite, 'Shows this help page', term.newLine)
 
