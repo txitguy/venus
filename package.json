@@ -2,7 +2,7 @@
   "name": "venus",
   "version": "1.1.0",
   "description": "Web design and development framework",
-  "private": true,
+  "private": false,
   "bin": {
     "venus": "bin/venus.js"
   },
